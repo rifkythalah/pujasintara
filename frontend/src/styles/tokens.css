@@ -1,0 +1,16 @@
+:root {
+  font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  color: #172b4d;
+  background: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --primary: #012269;
+  --accent: #10743b;
+  --ink: #172b4d;
+  --muted: #58677d;
+  --border: #dce3ec;
+  --surface: #f5f7fa;
+  --container: 1200px;
+  --gutter: 32px;
+}

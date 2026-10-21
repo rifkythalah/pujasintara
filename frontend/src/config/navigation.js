@@ -1,13 +1,17 @@
 /**
  * Menu mengikuti docs/docs/pujasintara-sitemap.md.
- * Resolved destinations use kind: internal | external | group.
- * Pending leaves deliberately have no kind or URL until verified.
- * Group children === null means unknown, not an empty approved submenu.
- * @typedef {{id: string, label: string, status: 'pending'} |
- * {id: string, label: string, kind: 'internal', to: string} |
- * {id: string, label: string, kind: 'external', href: string} |
- * {id: string, label: string, kind: 'group', children: NavItem[] | null}} NavItem
+ * Jenis tujuan hanya ditetapkan setelah dikonfirmasi. Label yang belum diketahui
+ * tujuannya tetap pending, bukan internal link dengan URL tebakan.
+ * children: null berarti isi grup belum diketahui (Katalog dan Direktori).
+ *
+ * @typedef {{id: string, label: string}} NavBase
+ * @typedef {NavBase & {kind: 'internal', to: string}} InternalNavItem
+ * @typedef {NavBase & {kind: 'external', href: string}} ExternalNavItem
+ * @typedef {NavBase & {kind: 'group', children: NavItem[] | null}} NavGroup
+ * @typedef {NavBase & {status: 'pending'}} PendingNavItem
+ * @typedef {InternalNavItem | ExternalNavItem | NavGroup | PendingNavItem} NavItem
  */
+/** @param {string} id @param {string} label @returns {PendingNavItem} */
 const pending = (id, label) => ({ id, label, status: 'pending' });
 
 /** @type {NavItem[]} */

@@ -1,45 +1,76 @@
-import { useEffect, useRef, useState } from 'react';
+import { useId, useLayoutEffect, useRef } from 'react';
 import Icon from '../ui/Icon.jsx';
 
-function NavGroup({ item }) {
-  const [open, setOpen] = useState(false);
-  const container = useRef(null);
+function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
+  const open = openPath[depth] === item.id;
   const trigger = useRef(null);
-  const panelId = `submenu-${item.id}`;
+  const panel = useRef(null);
+  const panelId = useId();
+  const triggerId = useId();
 
-  useEffect(() => {
-    if (!open) return;
-    const closeOutside = (event) => {
-      if (!container.current?.contains(event.target)) setOpen(false);
+  // Root panels scroll within the viewport; nested groups stay in normal flow.
+  useLayoutEffect(() => {
+    if (!open || depth !== 0) return;
+    const fitPanel = () => {
+      const available = window.innerHeight - panel.current.getBoundingClientRect().top - 16;
+      panel.current.style.setProperty('--panel-height', `${Math.max(0, available)}px`);
     };
-    document.addEventListener('pointerdown', closeOutside);
-    return () => document.removeEventListener('pointerdown', closeOutside);
-  }, [open]);
+    fitPanel();
+    window.addEventListener('resize', fitPanel);
+    window.addEventListener('scroll', fitPanel, { passive: true });
+    return () => {
+      window.removeEventListener('resize', fitPanel);
+      window.removeEventListener('scroll', fitPanel);
+    };
+  }, [open, depth]);
 
-  return <div className="nav-group" ref={container}
-    onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}
+  // Sibling groups close on activation. Closing during pointer focus could
+  // move an accordion button before its click fires; Navbar handles focus exit.
+  return <div className="nav-group"
     onKeyDown={(event) => {
       if (event.key === 'Escape' && open) {
+        event.preventDefault();
         event.stopPropagation();
-        setOpen(false);
+        onClose(depth);
         trigger.current?.focus();
       }
     }}>
-    <button ref={trigger} className="nav-trigger" type="button" aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(!open)}>
+    <button ref={trigger} id={triggerId} className="nav-trigger" type="button"
+      aria-expanded={open} aria-controls={panelId} onClick={() => onToggle(item.id, depth)}>
       {item.label}<span aria-hidden="true" className="nav-plus">{open ? '−' : '+'}</span>
     </button>
-    {open && <div className="nav-panel" id={panelId}>
-      {item.children ? <>
-        <p className="nav-note">Pratinjau menu · tujuan belum aktif</p>
-        <ul>{item.children.map((child) => <li key={child.id}><NavItem item={child} /></li>)}</ul>
-      </> : <p className="nav-note">Rincian submenu belum tersedia.</p>}
-    </div>}
+    <div ref={panel} className="nav-panel" id={panelId} hidden={!open} aria-labelledby={triggerId}>
+      {open && (item.children === null
+        ? <p className="nav-note">Rincian submenu belum tersedia.</p>
+        : <>
+          {item.children.some((child) => child.status === 'pending') &&
+            <p className="nav-note">Tujuan menu belum dikonfirmasi.</p>}
+          <ul>{item.children.map((child) => <li key={child.id}>
+            <NavItem item={child} depth={depth + 1} openPath={openPath}
+              onToggle={onToggle} onClose={onClose} {...linkProps} />
+          </li>)}</ul>
+        </>)}
+    </div>
   </div>;
 }
 
-export default function NavItem({ item }) {
-  if (item.kind === 'group') return <NavGroup item={item} />;
-  if (item.status === 'pending') return <span className="nav-pending" aria-disabled="true" title="Tujuan menu belum dikonfirmasi">{item.label}<span className="sr-only"> — belum aktif</span></span>;
-  if (item.kind === 'external') return <a href={item.href}>{item.label}<Icon name="arrow" /></a>;
-  return <a className="nav-link" href={item.to} aria-current={item.to === '/' ? 'page' : undefined}>{item.label}</a>;
+/**
+ * @param {{item: import('../../config/navigation.js').NavItem, depth?: number,
+ * openPath: string[], currentPath: string, onToggle: Function,
+ * onClose: Function, onNavigate: Function}} props
+ */
+export default function NavItem({ item, depth = 0, currentPath, onNavigate, ...groupProps }) {
+  if (item.status === 'pending') {
+    return <span className="nav-pending" aria-disabled="true" title="Tujuan menu belum dikonfirmasi">
+      {item.label}<span className="sr-only"> — belum aktif</span>
+    </span>;
+  }
+  if (item.kind === 'group') {
+    return <NavGroup item={item} depth={depth} currentPath={currentPath} onNavigate={onNavigate} {...groupProps} />;
+  }
+  if (item.kind === 'external') {
+    return <a className="nav-link" href={item.href} onClick={onNavigate}>{item.label}<Icon name="arrow" /></a>;
+  }
+  return <a className="nav-link" href={item.to} onClick={onNavigate}
+    aria-current={item.to === currentPath ? 'page' : undefined}>{item.label}</a>;
 }

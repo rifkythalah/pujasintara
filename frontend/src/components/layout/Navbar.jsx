@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router';
 import { navigation } from '../../config/navigation.js';
 import NavItem from '../navigation/NavItem.jsx';
 import Icon from '../ui/Icon.jsx';
@@ -9,7 +10,7 @@ export default function Navbar() {
   const container = useRef(null);
   const toggle = useRef(null);
   const nav = useRef(null);
-  const currentPath = window.location.pathname;
+  const { pathname: currentPath } = useLocation();
 
   function closeAll() {
     setMobileOpen(false);

@@ -1,6 +1,6 @@
-import SiteLayout from '../components/layout/SiteLayout.jsx';
-import HomePage from '../pages/HomePage.jsx';
+import { RouterProvider } from 'react-router/dom';
+import { router } from './router.jsx';
 
 export default function App() {
-  return <SiteLayout><HomePage /></SiteLayout>;
+  return <RouterProvider router={router} />;
 }

@@ -1,5 +1,24 @@
 # Pujasintara — Sitemap & Frontend Information Architecture v2
 
+## Keputusan implementasi — 22 Oktober 2026
+
+Pengguna menyetujui React Router dengan JavaScript + JSDoc dan satu planned page
+bersama. Seluruh item yang sudah bernama mendapat route lokal sementara,
+termasuk yang sebelumnya bertanda perlu konfirmasi tujuan. Ini bukan konfirmasi
+URL website lama atau layanan eksternal. Konten resmi dan desain masih menunggu.
+
+- Katalog: `/layanan/katalog`; Direktori: `/layanan/direktori`. Label membuka
+  halaman, tombol `+` terpisah membuka submenu. Anak submenu tetap tidak diketahui.
+- Bantuan adalah tautan langsung `/bantuan`. FAQ berada di `/bantuan#faq`, bukan
+  submenu atau route `/bantuan/faq`.
+- Grup Profil, Layanan, Aktivitas, dan Dokumen Publik tetap dropdown tanpa halaman
+  indeks. Tidak ada route detail atau pencarian yang ditambahkan.
+- `frontend/src/config/navigation.js` adalah sumber label/hierarki;
+  `frontend/src/config/routes.js` adalah sumber path dan metadata halaman.
+
+Matriks dan struktur di bawah merekam usulan historis; keputusan di atas
+menggantikannya untuk status route lokal, Katalog/Direktori, dan Bantuan.
+
 **Status:** informasi menu didasarkan pada screenshot website asli yang diberikan pengguna pada 20 Oktober 2026. Struktur `Bantuan`/FAQ dan `Kontak Kami` ditambahkan atas instruksi pengguna. URL/path di bawah adalah **usulan penamaan untuk React Router**, bukan URL yang terbukti ada di website asli. Konten tiap halaman belum diberikan kecuali homepage dalam spesifikasi lama.
 
 ## Peta navigasi

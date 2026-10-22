@@ -13,13 +13,14 @@ Build the public-facing Pujasintara website (Perpustakaan Nasional RI) as a main
 If these sources conflict, state the discrepancy and request a decision rather than silently choosing a redesign or deleting functionality.
 
 ## Approved navigation and page scope
+- **Decision approved 22 October 2026:** use JavaScript/JSX + JSDoc, not TypeScript. All named menu destinations may have local planned pages, including previously TBD destinations. Katalog and Direktori each have a local landing page plus a separate submenu toggle; children remain unknown. Bantuan is a direct `/bantuan` page containing FAQ, not a dropdown. These decisions supersede the historical proposed paths and TypeScript filenames below.
 - **Beranda:** homepage `/`.
 - **Profil:** Struktur Organisasi; Tugas dan Fungsi; Daftar Pegawai; Maklumat Pelayanan; Pustakawan Berkarya.
 - **Layanan:** Informasi Layanan; Tanya Pustakawan; Diseminasi Informasi; Fasilitas; Katalog (nested `+` group); Direktori (nested `+` group).
 - **Aktivitas:** Agenda; Berita; Galeri Video; Pengumuman; Info Barang Tertinggal.
 - **Dokumen Publik:** Panduan Layanan; Seri Penelusuran Referensi; Infografis; Laporan Media Monitoring; Standar Pelayanan; Survei Kepuasan; Tindakan Aduan; Produk Kemas Ulang.
 - **Kontak Kami:** standalone main navigation entry / contact page.
-- **Bantuan:** main navigation entry with FAQ. Other help content is TBD.
+- **Bantuan:** direct page `/bantuan`, with FAQ inside the page. FAQ about the prototype may describe actual prototype behavior; institutional answers still need verified content.
 - **Search:** screenshot shows a search icon, but search behavior and source are not specified; preserve UI if present and ask before introducing a search system.
 
 **Important limits:** `Katalog` and `Direktori` are known to be expandable but their actual children are UNKNOWN. Do not invent child labels, routes, links or content. The exact destination and whether an item opens a local route, external service, PDF, or expands a submenu must be verified. Paths in `docs/pujasintara-sitemap.md` are *proposed*, not confirmed existing URLs. Avoid dummy `href="#"` links that pretend to work.

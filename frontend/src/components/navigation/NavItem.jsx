@@ -1,4 +1,6 @@
 import { useId, useLayoutEffect, useRef } from 'react';
+import { NavLink } from 'react-router';
+import { getRoute, isNavigationActive } from '../../config/routes.js';
 import Icon from '../ui/Icon.jsx';
 
 function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
@@ -26,7 +28,7 @@ function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
 
   // Sibling groups close on activation. Closing during pointer focus could
   // move an accordion button before its click fires; Navbar handles focus exit.
-  return <div className="nav-group"
+  return <div className="nav-group" data-route-active={isNavigationActive(item, linkProps.currentPath) || undefined}
     onKeyDown={(event) => {
       if (event.key === 'Escape' && open) {
         event.preventDefault();
@@ -35,10 +37,14 @@ function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
         trigger.current?.focus();
       }
     }}>
-    <button ref={trigger} id={triggerId} className="nav-trigger" type="button"
-      aria-expanded={open} aria-controls={panelId} onClick={() => onToggle(item.id, depth)}>
-      {item.label}<span aria-hidden="true" className="nav-plus">{open ? '−' : '+'}</span>
-    </button>
+    <div className={item.routeId ? 'nav-group-heading has-page' : 'nav-group-heading'}>
+      {item.routeId && <NavLink className="nav-link" end to={getRoute(item.routeId).path} onClick={linkProps.onNavigate}>{item.label}</NavLink>}
+      <button ref={trigger} id={triggerId} className="nav-trigger" type="button"
+        aria-label={item.routeId ? `Submenu ${item.label}` : undefined}
+        aria-expanded={open} aria-controls={panelId} onClick={() => onToggle(item.id, depth)}>
+        {!item.routeId && item.label}<span aria-hidden="true" className="nav-plus">{open ? '−' : '+'}</span>
+      </button>
+    </div>
     <div ref={panel} className="nav-panel" id={panelId} hidden={!open} aria-labelledby={triggerId}>
       {open && (item.children === null
         ? <p className="nav-note">Rincian submenu belum tersedia.</p>
@@ -71,6 +77,5 @@ export default function NavItem({ item, depth = 0, currentPath, onNavigate, ...g
   if (item.kind === 'external') {
     return <a className="nav-link" href={item.href} onClick={onNavigate}>{item.label}<Icon name="arrow" /></a>;
   }
-  return <a className="nav-link" href={item.to} onClick={onNavigate}
-    aria-current={item.to === currentPath ? 'page' : undefined}>{item.label}</a>;
+  return <NavLink className="nav-link" end to={getRoute(item.routeId).path} onClick={onNavigate}>{item.label}</NavLink>;
 }

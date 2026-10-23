@@ -2,8 +2,9 @@ import { useId, useLayoutEffect, useRef } from 'react';
 import { NavLink } from 'react-router';
 import { getRoute, isNavigationActive } from '../../config/routes.js';
 import Icon from '../ui/Icon.jsx';
+import HeaderIcon from '../ui/HeaderIcon.jsx';
 
-function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
+function NavGroup({ item, depth, openPath, onToggle, onClose, onOpen, ...linkProps }) {
   const open = openPath[depth] === item.id;
   const trigger = useRef(null);
   const panel = useRef(null);
@@ -29,6 +30,12 @@ function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
   // Sibling groups close on activation. Closing during pointer focus could
   // move an accordion button before its click fires; Navbar handles focus exit.
   return <div className="nav-group" data-route-active={isNavigationActive(item, linkProps.currentPath) || undefined}
+    onMouseEnter={() => {
+      if (window.matchMedia('(min-width: 851px) and (hover: hover) and (pointer: fine)').matches) onOpen(item.id, depth);
+    }}
+    onMouseLeave={(event) => {
+      if (window.matchMedia('(min-width: 851px) and (hover: hover) and (pointer: fine)').matches && !event.currentTarget.contains(document.activeElement)) onClose(depth);
+    }}
     onKeyDown={(event) => {
       if (event.key === 'Escape' && open) {
         event.preventDefault();
@@ -42,7 +49,7 @@ function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
       <button ref={trigger} id={triggerId} className="nav-trigger" type="button"
         aria-label={item.routeId ? `Submenu ${item.label}` : undefined}
         aria-expanded={open} aria-controls={panelId} onClick={() => onToggle(item.id, depth)}>
-        {!item.routeId && item.label}<span aria-hidden="true" className="nav-plus">{open ? '−' : '+'}</span>
+        {!item.routeId && <span className="nav-label" data-label={item.label}>{item.label}</span>}<span aria-hidden="true" className="nav-plus"><HeaderIcon name="plus-circle" /></span>
       </button>
     </div>
     <div ref={panel} className="nav-panel" id={panelId} hidden={!open} aria-labelledby={triggerId}>
@@ -53,7 +60,7 @@ function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
             <p className="nav-note">Tujuan menu belum dikonfirmasi.</p>}
           <ul>{item.children.map((child) => <li key={child.id}>
             <NavItem item={child} depth={depth + 1} openPath={openPath}
-              onToggle={onToggle} onClose={onClose} {...linkProps} />
+              onToggle={onToggle} onClose={onClose} onOpen={onOpen} {...linkProps} />
           </li>)}</ul>
         </>)}
     </div>
@@ -63,7 +70,7 @@ function NavGroup({ item, depth, openPath, onToggle, onClose, ...linkProps }) {
 /**
  * @param {{item: import('../../config/navigation.js').NavItem, depth?: number,
  * openPath: string[], currentPath: string, onToggle: Function,
- * onClose: Function, onNavigate: Function}} props
+ * onClose: Function, onOpen: Function, onNavigate: Function}} props
  */
 export default function NavItem({ item, depth = 0, currentPath, onNavigate, ...groupProps }) {
   if (item.status === 'pending') {
@@ -77,5 +84,7 @@ export default function NavItem({ item, depth = 0, currentPath, onNavigate, ...g
   if (item.kind === 'external') {
     return <a className="nav-link" href={item.href} onClick={onNavigate}>{item.label}<Icon name="arrow" /></a>;
   }
-  return <NavLink className="nav-link" end to={getRoute(item.routeId).path} onClick={onNavigate}>{item.label}</NavLink>;
+  return <NavLink className="nav-link" end to={getRoute(item.routeId).path} onClick={onNavigate}>
+    {item.id === 'kontak' && <HeaderIcon name="phone" />}<span className="nav-label" data-label={item.label}>{item.label}</span>
+  </NavLink>;
 }

@@ -47,6 +47,6 @@ export const navigation = [
     internal('tindakan-aduan', 'Tindakan Aduan'),
     internal('produk-kemas-ulang', 'Produk Kemas Ulang'),
   ] },
-  internal('kontak', 'Kontak Kami'),
   internal('bantuan', 'Bantuan'),
+  internal('kontak', 'Kontak Kami'),
 ];

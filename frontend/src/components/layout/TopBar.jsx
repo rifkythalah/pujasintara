@@ -1,16 +1,23 @@
-import { Link } from 'react-router';
-import { getRoute } from '../../config/routes.js';
-import Icon from '../ui/Icon.jsx';
+import SiteLogo from './SiteLogo.jsx';
+import { headerCopy, socialLinks } from '../../config/header.js';
+import LanguageSelector from './LanguageSelector.jsx';
+import OpeningHours from './OpeningHours.jsx';
+import HeaderIcon from '../ui/HeaderIcon.jsx';
 
-export default function TopBar() {
+export default function TopBar({ locale, onLocaleChange }) {
+  const copy = headerCopy[locale];
   return <header className="topbar" id="atas">
     <div className="container topbar-content">
-      <Link className="brand" to={getRoute('home').path} aria-label="Pujasintara — Beranda">
-        <span className="brand-symbol"><Icon name="book" /></span>
-        <span><strong>PUJASINTARA</strong><small>Perpustakaan Nasional Republik Indonesia</small></span>
-      </Link>
-      <div className="topbar-note"><Icon name="clock" /><span>Ruang pengetahuan untuk semua<small>Informasi jam layanan akan dilengkapi</small></span></div>
-      <span className="language-label">Bahasa Indonesia</span>
+      <SiteLogo />
+      <OpeningHours locale={locale} />
+      <div className="topbar-tools">
+        <LanguageSelector locale={locale} onLocaleChange={onLocaleChange} />
+        <div className="header-socials" role="group" aria-label="Media sosial">
+          {socialLinks.map((social) => social.href
+            ? <a key={social.id} href={social.href} aria-label={social.label}><HeaderIcon name={social.id} /></a>
+            : <button key={social.id} type="button" disabled title={`${social.label}: ${copy.socialPending}`} aria-label={`${social.label}: ${copy.socialPending}`}><HeaderIcon name={social.id} /></button>)}
+        </div>
+      </div>
     </div>
   </header>;
 }

@@ -3,7 +3,7 @@ import { navigation } from './navigation.js';
 // Local page shells approved on 22 October 2026. No external URL is inferred.
 const definitions = [
   { id: 'home', path: '/', view: 'home' },
-  { id: 'struktur-organisasi', path: '/profil/struktur-organisasi', summary: 'Ruang informasi mengenai susunan organisasi Pujasintara.', topics: ['Bagan organisasi', 'Informasi unit kerja'] },
+  { id: 'struktur-organisasi', path: '/profil/struktur-organisasi', view: 'organization', summary: 'Ruang informasi mengenai susunan organisasi Pujasintara.', topics: ['Bagan organisasi', 'Informasi unit kerja'] },
   { id: 'tugas-dan-fungsi', path: '/profil/tugas-dan-fungsi', summary: 'Ruang pengenalan tugas dan fungsi unit layanan.', topics: ['Uraian tugas', 'Ruang lingkup fungsi'] },
   { id: 'daftar-pegawai', path: '/profil/daftar-pegawai', summary: 'Ruang informasi pegawai yang akan dilengkapi dengan data terverifikasi.', topics: ['Daftar pegawai', 'Informasi penugasan'] },
   { id: 'maklumat-pelayanan', path: '/profil/maklumat-pelayanan', summary: 'Ruang publikasi maklumat pelayanan.', topics: ['Materi maklumat', 'Dokumen resmi'] },

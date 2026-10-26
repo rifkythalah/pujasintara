@@ -1,6 +1,6 @@
 # Pujasintara — Memori Proyek & Panduan Handoff AI
 
-Terakhir diperbarui: 23 Oktober 2026. Dokumen ini adalah snapshot keputusan dan kondisi proyek, bukan bukti bahwa kode di masa depan masih sama. Verifikasi repository sebelum bekerja.
+Terakhir diperbarui: 26 Oktober 2026. Dokumen ini adalah snapshot keputusan dan kondisi proyek, bukan bukti bahwa kode di masa depan masih sama. Verifikasi repository sebelum bekerja.
 
 ## 1. Mulai percakapan baru
 
@@ -30,32 +30,74 @@ Keputusan JavaScript + JSDoc menggantikan rekomendasi TypeScript lama di AGENTS/
 - Jangan mengubah homepage/menu/section lain di luar cakupan permintaan.
 - Jangan menghapus, memindah atau menimpa legacy HTML dan aset. Pertahankan nama file dan URL `/assets/...` yang bekerja, termasuk nama dengan spasi.
 - Jangan install ulang framework atau mengganti package manager/lockfile tanpa kebutuhan dan persetujuan.
-- Jangan commit/push/deploy otomatis, reset hard, clean, atau menghapus perubahan lokal. Git status saat handoff berisi perubahan belum di-commit dan aset untracked.
+- Jangan commit/push/deploy otomatis, reset hard, clean, atau menghapus perubahan lokal.
 - Untuk setup, routing baru, atau refactor banyak file: tunjukkan rencana konkret dan minta persetujuan sesuai AGENTS. Revisi terlokalisasi yang sudah diminta boleh langsung dikerjakan.
 - Screenshot lampiran adalah referensi, bukan otomatis tersedia sebagai file lokal. Cari aset/path yang diberikan; jangan mengaku menyalin file yang belum ditemukan.
 
 ## 4. Stack dan struktur aktual
 
-Branch saat handoff: `feature/setup-framework`. Verifikasi lagi; jangan pindah branch sambil menimpa perubahan lokal.
+Branch aktif saat handoff: `feature/setup-framework` (sudah di-push & merged ke `develop` via PR #9).
+Branch `develop` adalah target pengembangan. Branch `main` **hanya** berisi "Initial commit" + satu revert commit; jangan merge ke main kecuali ada persetujuan rilis eksplisit.
 
 - App: `frontend/`, React 19, Vite 8, React Router 7, npm.
-- Bahasa: JavaScript/JSX dengan JSDoc untuk tipe data.
+- Bahasa: JavaScript/JSX dengan JSDoc untuk tipe data (bukan TypeScript).
 - Node yang disyaratkan package.json: >=22.20.0.
-- Styling: CSS biasa. Tailwind tidak tercantum sebagai dependency saat handoff; class ala Tailwind dari chat tidak otomatis bekerja.
-- `frontend/public/assets/`: gambar asli dan font lokal.
-- `frontend/src/app/`: App, router, aksesibilitas saat perpindahan route.
-- `frontend/src/config/navigation.js`: sumber tunggal label/hierarki menu; jenis internal, external, group.
-- `frontend/src/config/routes.js`: ID, path, metadata dan planned content halaman.
-- `frontend/src/components/layout/`: SiteLayout, TopBar, Navbar, Footer, SiteLogo, OpeningHours, LanguageSelector.
-- `frontend/src/components/navigation/`: NavItem rekursif dan MobileNav.
-- `frontend/src/components/ui/`: PageHeader, Breadcrumb, ikon dan primitive bersama.
-- `frontend/src/pages/`: route-level views; sebagian besar memakai PlannedPage bersama.
-- `frontend/src/features/homepage/`: komponen section, data mock, service boundary, hero hook/CSS.
-- `frontend/src/features/profil/`: data dan styling Struktur Organisasi.
-- `frontend/src/styles/`: tokens, global, header, fonts, halaman.
-- `frontend/tests/`: tes route dan jam buka.
+- Styling: CSS biasa. Tailwind tidak tercantum sebagai dependency; class ala Tailwind dari chat tidak otomatis bekerja.
+- `frontend/public/assets/`: gambar asli dan font lokal (jangan dipindah/rename tanpa audit seluruh import).
 
-Halaman tidak menyalin TopBar/Navbar/Footer. Gunakan SiteLayout + shared PageHeader/breadcrumb. Pisahkan data mock bertipe JSDoc dari JSX. Service boundary boleh disiapkan, tetapi jangan memanggil endpoint fiktif atau menyimulasikan sukses API.
+### Struktur `src/`
+
+```
+src/
+├── app/
+│   ├── App.jsx                 — root provider, layout wrapper
+│   ├── router.jsx              — semua route definition
+│   └── RouteAccessibility.jsx  — scroll to top & focus saat pindah route
+├── config/
+│   ├── navigation.js           — SATU sumber hierarki menu (internal/external/group)
+│   ├── routes.js               — 27 route + getRoute() + isNavigationActive()
+│   └── header.js               — copy TopBar (jadwal jam buka, sosial, i18n ID/EN)
+├── components/
+│   ├── layout/                 — SiteLayout, TopBar, Navbar, Footer, SiteLogo,
+│   │                             OpeningHours, LanguageSelector
+│   ├── navigation/             — NavItem (rekursif), MobileNav
+│   └── ui/                     — PageHeader, Breadcrumb, HeaderIcon, Icon,
+│                                 SectionHeading
+├── features/
+│   ├── homepage/
+│   │   ├── components/         — Hero, LayananOnline, LayananFisik, AgendaPreview,
+│   │   │                         BeritaPreview, LiterasiDigital
+│   │   ├── data/               — hero.js, homepage.mock.js  ← data mock bertipe JSDoc
+│   │   ├── hooks/              — useHeroCarousel.js
+│   │   ├── services/           — homepageService.js  ← boundary API masa depan
+│   │   ├── hero-carousel.css
+│   │   ├── layanan-online.css
+│   │   └── layanan-fisik.css
+│   ├── profil/
+│   │   ├── data/               — organization.mock.js
+│   │   └── organization.css
+│   └── bantuan/
+│       └── data/               — faq.js
+├── lib/
+│   └── openingHours.js         — logika jam buka berdasarkan weekday Asia/Jakarta
+├── pages/
+│   ├── HomePage.jsx            — menyusun 6 section homepage (lihat §10)
+│   ├── NotFoundPage.jsx
+│   ├── PlannedPage.jsx         — shell bersama untuk halaman belum selesai
+│   ├── bantuan/HelpPage.jsx
+│   └── profil/OrganizationPage.jsx
+├── styles/
+│   ├── tokens.css              — design tokens (warna, container, gutter)
+│   ├── global.css              — reset, container, responsive gutter
+│   ├── header.css              — TopBar, Navbar, dropdown, mobile drawer
+│   ├── header-fonts.css        — @font-face Plus Jakarta Sans & Montserrat lokal
+│   └── pages.css               — styling PlannedPage & halaman umum
+└── tests/
+    ├── openingHours.test.js
+    └── routes.test.js
+```
+
+Halaman tidak menyalin TopBar/Navbar/Footer. Gunakan `SiteLayout` + shared `PageHeader`/`Breadcrumb`. Pisahkan data mock bertipe JSDoc dari JSX. Service boundary boleh disiapkan, tetapi **jangan memanggil endpoint fiktif atau menyimulasikan sukses API**.
 
 ## 5. Navigasi dan halaman yang disetujui
 
@@ -63,35 +105,35 @@ Halaman tidak menyalin TopBar/Navbar/Footer. Gunakan SiteLayout + shared PageHea
 | --- | --- |
 | Beranda | `/` |
 | Profil | Struktur Organisasi; Tugas dan Fungsi; Daftar Pegawai; Maklumat Pelayanan; Pustakawan Berkarya |
-| Layanan | Informasi Layanan; Tanya Pustakawan; Diseminasi Informasi; Fasilitas; Katalog; Direktori |
+| Layanan | Informasi Layanan; Tanya Pustakawan; Diseminasi Informasi; Fasilitas; Katalog (+); Direktori (+) |
 | Aktivitas | Agenda; Berita; Galeri Video; Pengumuman; Info Barang Tertinggal |
 | Dokumen Publik | Panduan Layanan; Seri Penelusuran Referensi; Infografis; Laporan Media Monitoring; Standar Pelayanan; Survei Kepuasan; Tindakan Aduan; Produk Kemas Ulang |
 | Bantuan | Langsung `/bantuan`, FAQ di dalam halaman; bukan dropdown |
 | Kontak Kami | `/kontak-kami`, posisi desktop di sisi kanan |
 
-Path internal konkret ada di `config/routes.js`: gunakan getRoute/routeId, jangan menebak URL. Ada 27 definisi route plus fallback NotFound. Struktur Organisasi mempunyai page khusus; sebagian besar halaman lain masih planned page, bukan konten resmi selesai.
+Path internal konkret ada di `config/routes.js`: gunakan `getRoute(id)`, jangan menebak URL. Ada 27 definisi route plus fallback NotFound. `Struktur Organisasi` mempunyai page khusus (`OrganizationPage.jsx`); sebagian besar halaman lain masih `PlannedPage`, bukan konten resmi selesai.
 
-Katalog dan Direktori memiliki local landing page serta toggle submenu terpisah. Anak submenu masih UNKNOWN: jangan menciptakan label/URL anak. Jenis tujuan eksternal/PDF baru harus diverifikasi. Tidak boleh menggunakan `href="#"` sebagai navigasi palsu.
+`Katalog` dan `Direktori` memiliki local landing page serta toggle submenu terpisah. Anak submenu masih **UNKNOWN**: jangan menciptakan label/URL anak. Tidak boleh menggunakan `href="#"` sebagai navigasi palsu.
 
 Search hanya UI yang dipertahankan; sistem pencarian/backend belum disetujui. Jangan membuat fitur pencarian diam-diam.
 
 ## 6. Aturan kebenaran konten
 
-Jangan mengarang struktur kelembagaan, nama pegawai, kebijakan, layanan, FAQ institusi, agenda, berita atau kontak resmi. Konten belum tersedia harus diberi status jelas dan dikonfirmasi. Pengguna mengizinkan planned pages bersama, bukan puluhan halaman dengan fakta tebakan. FAQ prototype boleh menjelaskan perilaku prototype yang benar-benar ada.
+Jangan mengarang struktur kelembagaan, nama pegawai, kebijakan, layanan, FAQ institusi, agenda, berita atau kontak resmi. Konten belum tersedia harus diberi status jelas dan dikonfirmasi. Pengguna mengizinkan `PlannedPage` bersama, bukan puluhan halaman dengan fakta tebakan. FAQ prototype boleh menjelaskan perilaku prototype yang benar-benar ada.
 
-Banner pratinjau global paling atas sudah dihapus atas permintaan pengguna. Ini tidak menghapus kewajiban menandai konten placeholder pada bagian yang relevan. Banner gambar yang disediakan pengguna adalah aset tampilan; jangan menyimpulkan kebijakan baru dari isi gambar tanpa kebutuhan/verifikasi.
+Banner pratinjau global paling atas sudah dihapus atas permintaan pengguna. Ini tidak menghapus kewajiban menandai konten placeholder pada bagian yang relevan.
 
 ## 7. Header/navbar yang sudah disetujui
 
 - Putih untuk TopBar, navy `#012269` untuk navbar, hijau `#10743b` untuk aksen/CTA.
-- Logo: `/assets/Logo-Pujasintara-Black.png`, SiteLogo bersama. Logo tidak boleh diganti dengan teks atau ilustrasi baru.
-- Logo mobile 44px; >=768px 56px; desktop >1100px tinggi dinamis `clamp(56px, 5vw, 96px)`. Lihat aturan aktual header.css sebelum mengubah.
+- Logo: `/assets/Logo-Pujasintara-Black.png`, komponen `SiteLogo` bersama. Logo tidak boleh diganti dengan teks atau ilustrasi baru.
+- Logo mobile 44px; >=768px 56px; desktop >1100px tinggi dinamis `clamp(56px, 5vw, 96px)`. Lihat aturan aktual `header.css` sebelum mengubah.
 - TopBar: logo kiri; ikon jam + jadwal di tengah; pilihan ID/EN dan sosial di kanan.
 - Jadwal lebih kecil daripada logo dan sejajar secara vertikal. Hanya rentang jam yang bold pada teks hari ini.
 - Font header/hero: Plus Jakarta Sans dan Montserrat lokal, alias CSS `Header Jakarta`/`Header Montserrat`. Jangan memperluas perubahan font seluruh website tanpa permintaan.
-- Menu normal medium, hover/active bold. Garis putih bergerak mengikuti hover/focus dan kembali ke active route, panjang termasuk ikon.
+- Menu normal medium, hover/active bold. Garis putih bergerak mengikuti hover/focus dan kembali ke active route.
 - Plus dalam lingkaran berupa SVG terpusat, berputar saat hover; dropdown terbuka lewat hover dan tetap mendukung klik/keyboard.
-- Tablet 601–850px: hamburger di kiri, drawer dari kiri. <=600px: logo/search/hamburger, drawer dari kanan. Bahasa di dalam drawer. Detail breakpoint harus dibaca di CSS.
+- Tablet 601–850px: hamburger di kiri, drawer dari kiri. <=600px: logo/search/hamburger, drawer dari kanan. Bahasa di dalam drawer.
 - Drawer: backdrop, Escape, tutup luar/X, penguncian scroll, focus trap/return, menu bertingkat dan perubahan route ditangani.
 - Locale baru meliputi informasi jadwal; bukan penerjemahan penuh semua halaman.
 
@@ -107,11 +149,11 @@ Pengguna mengonfirmasi:
 - Sabtu – Minggu: **09.00 – 16.00** WIB.
 - Cuti Bersama Dan Hari Libur Nasional: **Tutup**.
 
-`lib/openingHours.js` menentukan jadwal hari ini berdasarkan weekday di Asia/Jakarta. OpeningHours memperbarui waktu setiap 30 detik dan ketika fokus/visibility berubah.
+`lib/openingHours.js` menentukan jadwal hari ini berdasarkan weekday di Asia/Jakarta. `OpeningHours` memperbarui waktu setiap 30 detik dan ketika fokus/visibility berubah.
 
-PENTING: kalender tanggal libur nasional/cuti bersama belum diimplementasikan. Teks hari ini masih mengikuti hari kerja/weekend; jangan mengklaim status otomatis mengetahui hari libur atau bahwa perpustakaan sedang buka pada detik tersebut.
+**PENTING:** kalender tanggal libur nasional/cuti bersama belum diimplementasikan. Teks hari ini masih mengikuti hari kerja/weekend; jangan mengklaim status otomatis mengetahui hari libur.
 
-Popup menggunakan native details/summary. Judul `Jadwal Jam Buka`, setiap awalan kata kapital, rentang waktu dan kata Tutup bold. Kalimat halaman jadwal akan ditambahkan sudah diganti dengan keterangan libur di atas. Klik di dalam panel tidak menutup; klik di luar, klik pemicu, atau Escape menutup; Escape mengembalikan fokus ke pemicu. Copy ID/EN di `config/header.js`, markup/perilaku di OpeningHours.jsx, style di header.css. Belum ada route halaman jadwal lengkap.
+Popup menggunakan native `details/summary`. Judul `Jadwal Jam Buka`, setiap awalan kata kapital, rentang waktu dan kata Tutup bold. Klik di dalam panel tidak menutup; klik di luar, klik pemicu, atau Escape menutup; Escape mengembalikan fokus ke pemicu. Copy ID/EN di `config/header.js`, markup/perilaku di `OpeningHours.jsx`, style di `header.css`. Belum ada route halaman jadwal lengkap.
 
 ## 9. Hero/carousel yang sudah disetujui
 
@@ -122,71 +164,106 @@ File utama:
 - `features/homepage/hero-carousel.css`
 
 Perilaku:
-- 8 slide saat handoff; interval **5000ms**, bukan 3000ms yang diminta sebelumnya.
+- 8 slide saat handoff; interval **5000ms**.
 - Bergerak ke kiri: gambar lama keluar kiri, gambar baru masuk kanan. Tidak fade.
 - Kontrol visual hanya batang indikator putih; tanpa angka, teks pause/putar, panah atau latar biru.
 - Sambutan dan CTA hanya pada slide gedung (`kind: welcome`). Slide informasi bersih tanpa overlay copy/tombol.
-- Gedung brightness(.85), setara penggelapan 15% secara CSS. Jangan edit file asli untuk exposure.
-- Desktop aspect-ratio 3/1; informasi object-fit contain, gedung cover. Mobile mempunyai aturan tinggi berbeda; width100% mencegah overflow dari aspect ratio + tinggi tetap.
-- Hero background full width; teks mengikuti container global. Judul satu baris desktop, boleh membungkus responsif.
-- CTA menuju route Agenda, tengah, font clamp(12px,.9vw,18px), padding10px20px, min-height44px; mobile12px dan padding8px16px.
-- Timer berhenti ketika tab tersembunyi, fokus berada dalam hero, atau prefers-reduced-motion aktif. Jangan menganggap ini bug autoplay.
+- Gedung `brightness(.85)`. Desktop `aspect-ratio 3/1`; informasi `object-fit contain`, gedung `cover`.
+- Hero background full width; teks mengikuti container global.
+- CTA menuju route Agenda, tengah, font `clamp(12px,.9vw,18px)`, padding `10px 20px`, min-height 44px.
+- Timer berhenti ketika tab tersembunyi, fokus berada dalam hero, atau `prefers-reduced-motion` aktif.
 
-Aset sesuai daftar saat handoff:
-1. `Gambar ChatGPT 25 Sep 2026, 10.45.19 1.png` — gedung/welcome.
-2. `1791953659_4489d110cb19e35ccf30.jpg` — Pancasila.
-3. `1744591601_cdbdd251e4cabe6dbe03.png`.
-4. `1777340793_9894a6f04be531191bca.jpg`.
-5. `1791953659_4489d110cb19e35ccf30 copy.jpg`.
-6. `1792035678_e8dbacb2518f63b160a9.jpg`.
-7. `1792650397_6fe7e700d1b04c209039.jpg`.
-8. `1792650647_05738698647bf30cb06b.jpg`.
+Aset hero (8 slide):
+1. `Gambar ChatGPT 25 Sep 2026, 10.45.19 1.png` — gedung/welcome
+2. `1791953659_4489d110cb19e35ccf30.jpg` — Pancasila
+3. `1744591601_cdbdd251e4cabe6dbe03.png`
+4. `1777340793_9894a6f04be531191bca.jpg`
+5. `1791953659_4489d110cb19e35ccf30 copy.jpg`
+6. `1792035678_e8dbacb2518f63b160a9.jpg`
+7. `1792650397_6fe7e700d1b04c209039.jpg`
+8. `1792650647_05738698647bf30cb06b.jpg`
 
-Versi Pancasila `copy.jpg` sama dengan banner Pancasila sebelumnya; pengguna sudah diberi tahu bahwa tampil dua kali. Jangan menghapus tanpa permintaan. Slide baru cukup masuk data dengan ID unik dan alt yang sesuai gambar, tanpa menciptakan konten institusi tambahan.
+## 10. Homepage — section yang sudah ada
 
-## 10. Spacing/layout: jangan kembali terlalu lebar
+`HomePage.jsx` merender 6 section secara berurutan. Data diambil via `homepageService.js` yang membaca `homepage.mock.js`.
 
-Pengguna terakhir meminta konten lebih masuk ke tengah, mengikuti garis merah screenshot kedua.
+### 10a. LayananOnline (`layanan-online.css`)
+Carousel layanan online dengan bleed ganda (kiri & kanan), audio streaming player terintegrasi (Radio WBS) dengan pengatur volume dinamis & minimize button. Data `onlineServices` (4 item saat handoff):
+1. Radio Streaming WBS — audio stream + link YouTube
+2. Layanan Naskah Nusantara — link ke `khastara.perpusnas.go.id`
+3. Diseminasi Informasi — link ke Google Form berlangganan
+4. Buletin Layanan — link ke `lembaran.pujasintara.info`
 
-- `styles/tokens.css`: container maksimal1920px; gutter default clamp(24px,4.5vw,160px).
-- Override desktop >1100px: **gutter10vw per sisi** (sekitar80% viewport untuk konten sampai max-container tercapai).
-- `styles/global.css`: <=850px gutter24px, <=600px20px.
-- `.container`: width min(container,100%-2*gutter), margin-inline auto.
+### 10b. LayananFisik (`layanan-fisik.css`) — **selesai 26 Okt 2026**
+Carousel banner wide beresolusi tinggi fasilitas onsite. Efek hover fade-black + judul layanan muncul di tengah gambar. Tombol panah kiri/kanan (chevron SVG) + indikator garis bawah horizontal. Data `onsiteServices` (4 item saat handoff):
+1. Layanan Keanggotaan (`layanan-keanggotaan.png`) — aset baru
+2. Ruang Baca Terpadu (`1792650397_...jpg`)
+3. Layanan Naskah Nusantara Onsite (`layanan-naskah-nusantara.png`)
+4. Layanan Referensi & Konsultasi (`1792035678_...jpg`)
+
+Semua item menuju `/layanan/fasilitas` (planned page). Aset baru: `layanan-keanggotaan.png`, `layanan-koleksi-anak.png` (tersedia di `public/assets/` meski item ke-2 saat ini memakai foto ruang baca).
+
+### 10c. AgendaPreview
+4 kartu agenda mock (Diskusi buku, Kelas literasi, Pengenalan layanan, Komunitas). Tema warna: blue, green, sand, pale. Bukan agenda resmi.
+
+### 10d. BeritaPreview
+3 kartu berita mock dengan placeholder editorial. Bukan konten resmi.
+
+### 10e. LiterasiDigital
+5 layanan digital: INLIS, OneSearch, iPusnas, e-Resources, SION.
+
+## 11. Spacing/layout
+
+- `styles/tokens.css`: container maksimal 1920px; gutter default `clamp(24px, 4.5vw, 160px)`.
+- Override desktop >1100px: **gutter 10vw per sisi** (~80% viewport untuk konten).
+- `styles/global.css`: <=850px gutter 24px, <=600px 20px.
+- `.container`: `width: min(container, 100% - 2*gutter)`, `margin-inline: auto`.
 - TopBar, navbar, hero copy, section dan footer harus sejajar. Background hero/nav tetap full bleed.
-- Grid/card mengikuti container; hindari lebar piksel tetap yang menimbulkan overflow.
-- `header.css` mengatur gap menu, padding link, margin-left:auto pada Kontak Kami. Jarak antarmenu berbeda dari gutter luar.
-- Ask-bar Layanan Online memiliki breakout margin/padding di global.css; hitung bersama container bila mengubah gutter.
 - CSS global/header memiliki beberapa override berlapis. Periksa cascade/breakpoint sebelum menambahkan aturan baru; jangan memulai refactor luas tanpa persetujuan.
 
-## 11. Pemeriksaan dan cara menjalankan
+## 12. Git & branch workflow
 
-Dari `frontend/` dengan Node>=22.20.0:
+| Branch | Tujuan |
+|--------|--------|
+| `main` | Hanya "Initial commit" + revert PR #7. **Jangan merge ke sini** kecuali ada persetujuan rilis eksplisit. |
+| `develop` | Branch integrasi utama. Semua PR feature branch di-merge ke sini. |
+| `feature/setup-framework` | Branch aktif pengembangan. Merged ke `develop` via PR #9 (26 Okt 2026). |
+
+Alur yang benar: buat branch baru dari `develop` → kerjakan → PR ke **`develop`**, bukan ke `main`. Default GitHub sering mengarahkan PR ke `main`; selalu cek dropdown `base` sebelum submit PR.
+
+## 13. Pemeriksaan dan cara menjalankan
+
+Dari `frontend/` dengan Node >=22.20.0:
 
 ```sh
-npm run dev
-npm run lint
-npm test
-npm run build
+npm run dev      # dev server Vite
+npm run lint     # ESLint
+npm test         # unit test routes & jam buka
+npm run build    # build produksi
 ```
 
-Dari root: `git diff --check`, tinjau diff dan status. Jangan menjalankan npm install jika dependency sudah tersedia dan tidak ada perubahan kebutuhan.
+Dari root: `git diff --check`, tinjau diff dan status. Jangan menjalankan `npm install` jika dependency sudah tersedia dan tidak ada perubahan kebutuhan.
 
 Pada Mac sesi ini Node22 ada di `/Users/macbookpro/.nvm/versions/node/v22.20.0/bin`; path itu spesifik mesin, jangan dianggap universal.
 
-Untuk perubahan navigasi/router: browser back/forward, deep link, refresh, NotFound, active route, dropdown bertingkat, keyboard, Escape, focus, mobile drawer. Deployment produksi nantinya memerlukan fallback SPA untuk BrowserRouter; build sukses tidak membuktikan konfigurasi hosting sudah benar.
-
-Untuk perubahan visual: cek beberapa viewport (misalnya320,390,768,1024,1440,1920), overflow horizontal, alignment container, ukuran CTA, keterbacaan dan gambar. Jangan mengklaim tes browser hanya dari build. Tool Playwright sementara pernah dipakai dari `/private/tmp/pujasintara-header-check`; itu bukan dependency repo atau tes permanen dan mungkin sudah hilang. Jangan mengandalkannya tanpa memeriksa.
+Untuk perubahan navigasi/router: uji browser back/forward, deep link, refresh, NotFound, active route, dropdown bertingkat, keyboard, Escape, focus, mobile drawer.
 
 Hasil pemeriksaan historis, bukan jaminan untuk revisi berikutnya:
-- Revisi inset: alignment dan overflow browser pada12 ukuran320–2560px lulus.
-- Revisi tombol: build dan diff lulus.
+- Revisi inset: alignment dan overflow browser pada 12 ukuran 320–2560px lulus.
 - Revisi popup terakhir: lint, build, diff lulus; browser memeriksa bold hours, keterangan tutup, klik dalam/luar, Escape/focus dan bahasa Inggris.
-- Suite unit tersedia untuk routes/jam buka; jalankan lagi sesuai perubahan, jangan mengaku semua tes baru dijalankan berdasarkan hasil lama.
+- Suite unit tersedia untuk routes/jam buka; jalankan lagi sesuai perubahan.
 
-## 12. Titik kelanjutan dan pekerjaan belum selesai
+## 14. Titik kelanjutan dan pekerjaan belum selesai
 
-Pengguna sedang menyelesaikan header/hero sebelum melanjutkan section di bawahnya (Layanan Online). Tunggu instruksi/desain section itu; jangan langsung merombak seluruh homepage.
+Status section homepage (26 Okt 2026):
+- ✅ Hero/carousel (8 slide)
+- ✅ Layanan Online (carousel + audio player)
+- ✅ Layanan Fisik (carousel onsite — baru selesai)
+- ⏳ AgendaPreview — layout ada, konten masih mock
+- ⏳ BeritaPreview — layout ada, konten masih mock
+- ⏳ LiterasiDigital — layout ada, data mock
 
-Belum final: konten resmi halaman internal, desain section berikutnya, tujuan detail Katalog/Direktori, route jadwal lengkap, kalender libur, i18n seluruh situs, pencarian, API Laravel dan deployment. Ini daftar status, bukan izin untuk mengimplementasikan semuanya.
+Belum final: konten resmi halaman internal, desain section berikutnya, tujuan detail Katalog/Direktori, route jadwal lengkap, kalender libur nasional, i18n seluruh situs, pencarian, API Laravel dan deployment. Ini daftar status, bukan izin untuk mengimplementasikan semuanya.
+
 
 Setelah sesi penting, perbarui handoff ini: keputusan baru yang menggantikan keputusan lama, file relevan, hasil pemeriksaan aktual, dan hal yang menunggu pengguna. Jangan menyimpan token, kredensial, atau data sensitif di dokumen memori.

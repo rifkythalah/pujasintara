@@ -8,5 +8,5 @@ import { getHomepageContent } from '../features/homepage/services/homepageServic
 
 export default function HomePage() {
   const content = getHomepageContent();
-  return <><Hero /><LayananOnline services={content.onlineServices} /><LayananFisik /><AgendaPreview agenda={content.agenda} /><BeritaPreview news={content.news} /><LiterasiDigital services={content.digitalServices} /></>;
+  return <><Hero /><LayananOnline services={content.onlineServices} /><LayananFisik services={content.onsiteServices} /><AgendaPreview agenda={content.agenda} /><BeritaPreview news={content.news} /><LiterasiDigital services={content.digitalServices} /></>;
 }

@@ -58,6 +58,35 @@ export const homepageMock = {
     { id: 'koleksi', title: 'Menemukan bacaan untuk perjalanan belajarmu', category: 'Koleksi', excerpt: 'Contoh ringkasan konten koleksi perpustakaan.', theme: 'sand' },
     { id: 'digital', title: 'Lebih dekat dengan sumber informasi digital', category: 'Layanan digital', excerpt: 'Contoh ringkasan konten pengenalan layanan.', theme: 'blue' },
   ],
-  // Nama tercantum dalam spesifikasi historis. URL sengaja belum diberikan.
   digitalServices: ['INLIS', 'OneSearch', 'iPusnas', 'e-Resources', 'SION'],
+  onsiteServices: [
+    {
+      id: 'layanan-keanggotaan',
+      title: 'Layanan Keanggotaan',
+      image: '/assets/layanan-keanggotaan.png',
+      alt: 'Area Layanan Keanggotaan Gedung Perpustakaan Nasional RI',
+      href: '/layanan/fasilitas',
+    },
+    {
+      id: 'layanan-ruang-baca',
+      title: 'Ruang Baca Terpadu',
+      image: '/assets/1792650397_6fe7e700d1b04c209039.jpg',
+      alt: 'Fasilitas Ruang Baca Terpadu Koleksi Perpustakaan Nasional RI',
+      href: '/layanan/fasilitas',
+    },
+    {
+      id: 'layanan-koleksi-naskah',
+      title: 'Layanan Naskah Nusantara Onsite',
+      image: '/assets/layanan-naskah-nusantara.png',
+      alt: 'Ruang Layanan Koleksi Naskah Nusantara dan Manuskrip',
+      href: '/layanan/fasilitas',
+    },
+    {
+      id: 'layanan-referensi',
+      title: 'Layanan Referensi & Konsultasi',
+      image: '/assets/1792035678_e8dbacb2518f63b160a9.jpg',
+      alt: 'Layanan Konsultasi dan Penelusuran Referensi Onsite',
+      href: '/layanan/fasilitas',
+    },
+  ],
 };

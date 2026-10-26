@@ -11,6 +11,11 @@
   --muted: #58677d;
   --border: #dce3ec;
   --surface: #f5f7fa;
-  --container: 1200px;
-  --gutter: 32px;
+  --container: 1920px;
+  --gutter: clamp(24px, 4.5vw, 160px);
+}
+
+/* Align desktop header and content to the inset shown in the reference. */
+@media (min-width: 1101px) {
+  :root { --gutter: 10vw; }
 }

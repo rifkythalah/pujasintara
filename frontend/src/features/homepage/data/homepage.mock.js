@@ -1,9 +1,51 @@
 /** Data demonstrasi lokal; bukan informasi resmi atau respons API. */
 export const homepageMock = {
   onlineServices: [
-    { id: 'jelajah', eyebrow: 'TEMUKAN WAWASAN BARU', title: 'Pengetahuan tanpa batas ruang', description: 'Contoh tampilan pengenalan layanan digital. Informasi dan tautan layanan akan disesuaikan dengan sumber resmi.', category: 'Eksplorasi digital', number: '01', theme: 'blue', cover: 'Jelajahi\ndunia\npengetahuan.' },
-    { id: 'referensi', eyebrow: 'TEMAN PERJALANAN BELAJAR', title: 'Mulai dari sebuah pertanyaan', description: 'Contoh ruang pengenalan layanan referensi. Alur konsultasi dan kanal Tanya Pustakawan belum dihubungkan.', category: 'Referensi & informasi', number: '02', theme: 'green', cover: 'Bertanya.\nMenemukan.\nMemahami.' },
-    { id: 'literasi', eyebrow: 'BELAJAR SEPANJANG HAYAT', title: 'Membaca, belajar, dan bertumbuh', description: 'Contoh materi pengenalan literasi digital. Konten edukasi akan ditambahkan setelah materi tersedia.', category: 'Literasi digital', number: '03', theme: 'sand', cover: 'Satu bacaan.\nBanyak\nkemungkinan.' },
+    {
+      id: 'radio-wbs',
+      title: 'Radio Streaming Perpusnas -\nWidya Bahana Swara',
+      description: 'Dengarkan obrolan (podcast) tentang topik-topik menarik seputar layanan Perpusnas, peringatan momen penting nasional & lagu-lagu pilihan, dalam fasilitas streaming radio serta kanal YouTube Widya Bahana Swara.',
+      actions: [
+        { label: 'Kanal Youtube WBS', href: 'https://www.youtube.com/@WBSRadioPerpusnas', isExternal: true },
+        { label: 'Radio Streaming', streamUrl: 'https://widya-bahana-suara.perpusnas.go.id/live?type=http&nocache=2', isAudio: true },
+      ],
+      thumbnail: '/assets/radio-perpusnas.png',
+      heroImage: '/assets/radio-perpusnas.png',
+      alt: 'Studio radio streaming dan rekaman podcast Perpusnas Widya Bahana Swara',
+    },
+    {
+      id: 'naskah-nusantara',
+      title: 'Layanan Naskah Nusantara',
+      description: 'Portal yang mendokumentasikan hasil dari paket kegiatan pendayagunaan naskah Nusantara di berbagai lembaga dan masyarakat.',
+      actions: [
+        { label: 'Kunjungi Portal Naskah', href: 'https://khastara.perpusnas.go.id/', isExternal: true },
+      ],
+      thumbnail: '/assets/layanan-naskah-nusantara.png',
+      heroImage: '/assets/layanan-naskah-nusantara.png',
+      alt: 'Dokumentasi naskah kuno Nusantara dan lontar bersejarah Perpusnas',
+    },
+    {
+      id: 'diseminasi-informasi',
+      title: 'Diseminasi Informasi',
+      description: 'Ingin mendapatkan paket informasi sesuai subjek yang diminati secara berkala? Berlangganan sekarang, Gratis!',
+      actions: [
+        { label: 'Daftar Langganan', href: 'https://docs.google.com/forms/d/e/1FAIpQLSfbaNLgkJfH_yD8sTk66BaVWsDlXGQ8oSAYWZW1z0wjtvw5KA/viewform?embedded=true', isExternal: true },
+      ],
+      thumbnail: '/assets/diseminasi-informasi.png',
+      heroImage: '/assets/diseminasi-informasi.png',
+      alt: 'Layanan Diseminasi Informasi Terseleksi Perpustakaan Nasional RI',
+    },
+    {
+      id: 'buletin-layanan',
+      title: 'Buletin Layanan',
+      description: 'Berita layanan, rekomendasi koleksi, dan produk hasil kemas ulang informasi di lingkungan kerja Pujasintara. Buletin ini akan diterbitkan berkala setiap bulan menggunakan layanan surat elektronik.',
+      actions: [
+        { label: 'Mulai Berlangganan', href: 'https://lembaran.pujasintara.info/', isExternal: true },
+      ],
+      thumbnail: '/assets/image.png',
+      heroImage: '/assets/image.png',
+      alt: 'Buletin Layanan Pujasintara Perpustakaan Nasional RI',
+    },
   ],
   agenda: [
     { id: 'diskusi', title: 'Diskusi buku dan berbagi perspektif', category: 'Diskusi buku', theme: 'blue' },

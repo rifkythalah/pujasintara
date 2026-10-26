@@ -1,8 +1,16 @@
 /** @typedef {'id' | 'en'} HeaderLocale */
-/** @type {Record<HeaderLocale, {schedule: string, scheduleNote: string, scheduleLink: string, schedulePending: string, languageLabel: string, socialPending: string}>} */
+/** @type {Record<HeaderLocale, {schedule: {days: string, hours: string}[], scheduleLink: string, holidayLabel: string, closed: string, languageLabel: string, socialPending: string}>} */
 export const headerCopy = {
-  id: { schedule: 'Senin – Jumat: 08.00 – 19.00 WIB', scheduleNote: 'Sabtu – Minggu: 09.00 – 16.00 WIB', scheduleLink: 'Jadwal jam buka', schedulePending: 'Jadwal reguler mingguan. Halaman jadwal lengkap akan ditambahkan.', languageLabel: 'Bahasa informasi jadwal', socialPending: 'Tautan resmi belum tersedia' },
-  en: { schedule: 'Monday – Friday: 08:00 – 19:00 WIB', scheduleNote: 'Saturday – Sunday: 09:00 – 16:00 WIB', scheduleLink: 'Opening hours', schedulePending: 'Regular weekly hours. The full schedule page will be added later.', languageLabel: 'Opening hours language', socialPending: 'Official link not available yet' },
+  id: {
+    schedule: [{ days: 'Senin – Jumat', hours: '08.00 – 19.00' }, { days: 'Sabtu – Minggu', hours: '09.00 – 16.00' }],
+    scheduleLink: 'Jadwal Jam Buka', holidayLabel: 'Cuti Bersama Dan Hari Libur Nasional', closed: 'Tutup',
+    languageLabel: 'Bahasa informasi jadwal', socialPending: 'Tautan resmi belum tersedia',
+  },
+  en: {
+    schedule: [{ days: 'Monday – Friday', hours: '08:00 – 19:00' }, { days: 'Saturday – Sunday', hours: '09:00 – 16:00' }],
+    scheduleLink: 'Opening Hours', holidayLabel: 'Collective Leave And National Holidays', closed: 'Closed',
+    languageLabel: 'Opening hours language', socialPending: 'Official link not available yet',
+  },
 };
 
 /** @type {{id: string, label: string, href: string | null}[]} */

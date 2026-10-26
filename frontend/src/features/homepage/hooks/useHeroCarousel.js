@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 
 export default function useHeroCarousel(count, interval) {
   const [index, setIndex] = useState(0);
+  const [previous, setPrevious] = useState(null);
   const [paused, setPaused] = useState(false);
-  const [hovered, setHovered] = useState(false);
+
   const [hidden, setHidden] = useState(() => document.hidden);
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   useEffect(() => {
@@ -17,12 +18,12 @@ export default function useHeroCarousel(count, interval) {
       document.removeEventListener('visibilitychange', visibilityChanged);
     };
   }, []);
-  const playing = count > 1 && !paused && !hovered && !hidden && !reducedMotion;
+  const playing = count > 1 && !paused && !hidden && !reducedMotion;
   useEffect(() => {
     if (!playing) return;
-    const timer = window.setTimeout(() => setIndex((value) => (value + 1) % count), interval);
+    const timer = window.setTimeout(() => (() => { setPrevious(index); setIndex((index + 1) % count); })(), interval);
     return () => window.clearTimeout(timer);
   }, [index, count, interval, playing]);
-  const select = (next) => { setPaused(true); setIndex((next + count) % count); };
-  return { index, paused, playing, reducedMotion, select, setHovered, setPaused };
+  const select = (next) => { if (next === index) return; setPrevious(index); setIndex((next + count) % count); };
+  return { index, previous, playing, select, setPaused };
 }

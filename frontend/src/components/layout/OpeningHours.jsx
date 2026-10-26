@@ -22,6 +22,16 @@ export default function OpeningHours({ locale }) {
     };
   }, []);
 
+  useEffect(() => {
+    const closeOutside = (event) => {
+      if (details.current?.open && !details.current.contains(event.target)) {
+        details.current.open = false;
+      }
+    };
+    document.addEventListener('click', closeOutside);
+    return () => document.removeEventListener('click', closeOutside);
+  }, []);
+
   return <div className="topbar-note" lang={locale}>
     <Icon name="clock" />
     <div>
@@ -35,8 +45,8 @@ export default function OpeningHours({ locale }) {
         <summary ref={summary}>{copy.scheduleLink}<Icon name="arrow" /></summary>
         <div className="opening-hours-panel">
           <strong>{copy.scheduleLink}</strong>
-          <p>{copy.schedule}</p><p>{copy.scheduleNote}</p>
-          <small>{copy.schedulePending}</small>
+          {copy.schedule.map(({ days, hours }) => <p key={days}>{days}: <strong>{hours}</strong> WIB</p>)}
+          <p>{copy.holidayLabel}: <strong>{copy.closed}</strong></p>
         </div>
       </details>
     </div>

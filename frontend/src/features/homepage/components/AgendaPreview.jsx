@@ -1,12 +1,109 @@
-import Icon from '../../../components/ui/Icon.jsx';
-import SectionHeading from '../../../components/ui/SectionHeading.jsx';
+import { Link } from 'react-router';
+import '../agenda-preview.css';
 
+/**
+ * @typedef {Object} AgendaItem
+ * @property {string} id
+ * @property {string} title
+ * @property {string} [date]
+ * @property {string} [time]
+ * @property {string} [location]
+ * @property {string} [image]
+ * @property {string} [alt]
+ * @property {string} [href]
+ */
+
+/**
+ * Komponen Pratinjau Agenda & Kegiatan Mendatang di Halaman Utama.
+ * Menampilkan kartu kegiatan berbingkai bersih dengan logo instansi, badge tanggal,
+ * thumbnail foto kegiatan, waktu, lokasi, dan tautan detail agenda.
+ *
+ * @param {{ agenda?: AgendaItem[] }} props
+ */
 export default function AgendaPreview({ agenda }) {
-  return <section className="section" id="agenda" aria-labelledby="agenda-title"><div className="container">
-    <SectionHeading eyebrow="RUANG TEMU & BELAJAR" title="Agenda & Kegiatan Mendatang" id="agenda-title"><span className="section-note">Contoh agenda · bukan jadwal resmi</span></SectionHeading>
-    <div className="agenda-grid">{agenda.map((item, index) => <article className="agenda-card" key={item.id}>
-      <div className={`agenda-art theme-${item.theme}`} aria-hidden="true"><span className="art-number">0{index + 1}</span><Icon name="book" /><span>{item.category}</span></div>
-      <div className="agenda-body"><span className="small-label">{item.category}</span><h3>{item.title}</h3><p><Icon name="clock" />Jadwal belum ditetapkan</p><p><Icon name="location" />Lokasi belum ditetapkan</p><span className="card-status">Konten demonstrasi</span></div>
-    </article>)}</div>
-  </div></section>;
+  const items = agenda && agenda.length > 0 ? agenda : [];
+
+  return (
+    <section className="section agenda-section" id="agenda" aria-labelledby="agenda-title">
+      <div className="container">
+        {/* Header Section: Eyebrow + Judul di Kiri, CTA Kalender Lengkap di Kanan */}
+        <header className="agenda-header">
+          <div className="agenda-header-text">
+            <p className="agenda-eyebrow">Kalender Kegiatan</p>
+            <h2 id="agenda-title" className="agenda-title">
+              Agenda & Kegiatan Mendatang
+            </h2>
+          </div>
+          <Link to="/aktivitas/agenda" className="agenda-header-cta">
+            Lihat Kalender Agenda Lengkap
+          </Link>
+        </header>
+
+        {/* Grid Kartu Agenda 4 Kolom */}
+        <div className="agenda-cards-grid">
+          {items.map((item) => (
+            <article className="agenda-card-item" key={item.id}>
+              {/* Bagian Atas Card: Logo Bintang Perpusnas di Kiri + Badge Tanggal di Kanan */}
+              <div className="agenda-card-top">
+                <img
+                  src="/assets/logo-bintang-perpusnas.png"
+                  alt="Logo Bintang Perpustakaan Nasional RI"
+                  className="agenda-card-brand"
+                />
+                <span className="agenda-card-date-badge">
+                  {item.date || '30 Sep 2026'}
+                </span>
+              </div>
+
+              {/* Foto / Poster Kegiatan */}
+              <div className="agenda-card-media">
+                <img
+                  src={item.image || '/assets/radio-perpusnas.png'}
+                  alt={item.alt || item.title}
+                  className="agenda-card-img"
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Judul Kegiatan */}
+              <h3 className="agenda-card-heading">
+                {item.title}
+              </h3>
+
+              {/* Meta Informasi: Waktu & Lokasi */}
+              <div className="agenda-card-meta">
+                <div className="agenda-meta-item">
+                  <svg className="agenda-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <span>{item.time || '09.15 - 13.00 WIB · Terbuka Untuk Umum'}</span>
+                </div>
+                <div className="agenda-meta-item">
+                  <svg className="agenda-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>{item.location || 'Lantai 4 Perpustakaan Nasional RI'}</span>
+                </div>
+              </div>
+
+              {/* Footer Card: Action Link Rata Kanan */}
+              <div className="agenda-card-footer">
+                <Link to={item.href || '/aktivitas/agenda'} className="agenda-detail-link">
+                  <span className="circle-arrow-icon" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M7.5 10H12.5M12.5 10L9.5 7M12.5 10L9.5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span>Lihat Detail Agenda</span>
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

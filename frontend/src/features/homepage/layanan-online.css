@@ -298,12 +298,12 @@
   height: 16px;
 }
 
-/* Thumbnail Foto di Sisi Kanan Card Info (Proporsional dengan card yang distretch) */
+/* Thumbnail Foto di Sisi Kanan Card Info (Konsisten Full Vertikal, Frame Terkunci Rapi) */
 .info-card-thumb-wrapper {
   flex-shrink: 0;
   width: clamp(180px, 14vw, 240px);
   align-self: stretch;
-  height: 100%;
+  position: relative; /* Menjadi konteks posisi untuk gambar absolute */
   border-radius: 0 19px 19px 0; /* Mengikuti rounded kanan card */
   overflow: hidden;
   background-color: #f1f5f9;
@@ -322,9 +322,13 @@
 }
 
 .info-card-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -572,56 +576,123 @@
 
 /* --- Responsif Layout --- */
 @media (max-width: 1024px) {
+  .online-section {
+    padding-block: 48px 64px;
+  }
+
   .online-section-container {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 0;
   }
 
-  .online-info-card {
-    min-height: 260px;
-    height: auto;
-  }
-
+  /* Hilangkan foto preview besar di bawahnya saat responsif untuk tablet/mobile agar clean */
   .online-right-column {
-    margin-right: 0;
+    display: none !important;
   }
 
-  .online-carousel-display {
-    height: 380px;
+  /* Card Informasi di tablet: tetap horizontal flex-row dengan frame gambar konsisten full vertikal */
+  .online-info-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 290px;
+    height: auto;
+    border-radius: 0 20px 20px 0;
   }
 
-  .peek-service-card {
-    width: 120px;
-    height: 75%;
+  .info-card-content {
+    flex: 1;
+    min-width: 0;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    padding-right: 24px;
+    justify-content: center;
   }
 
-  .peek-service-card:hover {
-    width: 130px;
+  /* Frame gambar dipaksa konsisten seukuran card informasi diseminasi informasi */
+  .info-card-thumb-wrapper {
+    flex-shrink: 0;
+    width: clamp(180px, 24vw, 240px);
+    align-self: stretch;
+    position: relative;
+    border-radius: 0 19px 19px 0;
+    overflow: hidden;
+    background-color: #f1f5f9;
+  }
+
+  .info-card-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .online-carousel-nav {
+    margin-block: 20px 24px;
   }
 }
 
 @media (max-width: 768px) {
   .online-section {
-    padding-block: 48px 60px;
+    padding-block: 40px 52px;
   }
 
+  /* Tetap sembunyikan preview besar di bawahnya */
+  .online-right-column {
+    display: none !important;
+  }
+
+  /* Pada mobile tetap konsisten horizontal dengan frame gambar konsisten full vertikal */
   .online-info-card {
-    flex-direction: column-reverse;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 270px;
     height: auto;
-    min-height: 0;
-    border-radius: 0 16px 16px 0;
-    padding-left: var(--online-bleed);
+    border-radius: 0 18px 18px 0;
   }
 
   .info-card-content {
-    padding: 20px 16px 20px 0;
-    justify-content: flex-start;
+    padding: 20px 18px 20px 0;
+    justify-content: center;
   }
 
+  .info-card-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .info-card-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  /* Frame gambar konsisten & full vertikal di sisi kanan */
   .info-card-thumb-wrapper {
+    flex-shrink: 0;
+    width: clamp(140px, 28vw, 190px);
+    align-self: stretch;
+    position: relative;
+    border-radius: 0 17px 17px 0;
+    overflow: hidden;
+  }
+
+  .info-card-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 160px;
-    border-radius: 0 15px 0 0;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   .tanya-pustakawan-bar {
@@ -630,48 +701,39 @@
     align-items: flex-start;
     gap: 12px;
     padding-block: 16px;
-    padding-left: var(--online-bleed);
+    padding-right: 20px;
   }
 
   .tanya-pustakawan-prompt {
     white-space: normal;
-  }
-
-  .online-carousel-display {
-    height: 300px;
-  }
-
-  .main-service-card {
-    border-radius: 20px;
-  }
-
-  .peek-service-card {
-    border-radius: 20px 0 0 20px;
-    width: 75px;
-    height: 75%;
-  }
-
-  .peek-next-hint {
-    display: none;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .online-main-title {
-    font-size: 28px;
+    font-size: 26px;
+  }
+
+  .online-info-card {
+    min-height: 250px;
   }
 
   .info-card-title {
-    font-size: 18px;
+    font-size: 17px;
+  }
+
+  .info-card-desc {
+    font-size: 13.5px;
+  }
+
+  .info-card-thumb-wrapper {
+    width: 120px;
   }
 
   .info-card-actions {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-  }
-
-  .peek-next-title {
-    font-size: 13px;
   }
 }

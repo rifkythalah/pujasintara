@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import '../layanan-fisik.css';
 
@@ -19,36 +19,86 @@ const defaultServices = [
     alt: 'Fasilitas Layanan Keanggotaan di Gedung Perpustakaan Nasional RI',
     href: '/layanan/fasilitas',
   },
+  {
+    id: 'layanan-koleksi-anak',
+    title: 'Layanan Koleksi Anak',
+    image: '/assets/layanan-koleksi-anak.png',
+    alt: 'Fasilitas Layanan Koleksi Anak Perpustakaan Nasional RI',
+    href: '/layanan/fasilitas',
+  },
+  {
+    id: 'layanan-multimedia',
+    title: 'Layanan Multimedia',
+    image: '/assets/layanan-multimedia.png',
+    alt: 'Fasilitas Layanan Multimedia Perpustakaan Nasional RI',
+    href: '/layanan/fasilitas',
+  },
+  {
+    id: 'layanan-monograf-terbuka',
+    title: 'Layanan Monograf Terbuka',
+    image: '/assets/layanan-monograf terbuka.png',
+    alt: 'Fasilitas Layanan Monograf Terbuka Perpustakaan Nasional RI',
+    href: '/layanan/fasilitas',
+  },
+  {
+    id: 'layanan-lainnya',
+    title: 'Lihat Selengkapnya Untuk 20 Layanan Lainnya',
+    image: '/assets/layanan-lainnya.png',
+    alt: 'Lihat Selengkapnya Untuk 20 Layanan Fasilitas Perpustakaan Nasional RI Lainnya',
+    href: '/layanan/informasi-layanan',
+  },
 ];
 
 /**
  * Komponen Fasilitas Layanan Onsite Terpadu (Layanan Fisik & Ruang Baca Terpadu).
  * Menampilkan carousel banner wide beresolusi tinggi dengan efek hover fade-black,
- * highlight judul layanan di tengah gambar, tombol panah navigasi, dan indikator dash.
+ * judul layanan di tengah gambar tanpa animasi teks show-up, autoplay 3 detik,
+ * tombol panah navigasi, dan indikator dash.
  *
  * @param {{ services?: OnsiteService[] }} props
  */
 export default function LayananFisik({ services }) {
   const list = services && services.length > 0 ? services : defaultServices;
   const [index, setIndex] = useState(0);
+  const [previous, setPrevious] = useState(null);
+  const [direction, setDirection] = useState('forward');
+  const [isPaused, setIsPaused] = useState(false);
 
-  const current = list[index];
+  // Autoplay gulir otomatis setiap 3 detik jika tidak ada interaksi (hover / focus)
+  useEffect(() => {
+    if (isPaused || list.length <= 1) return;
+
+    const intervalTimer = setInterval(() => {
+      setDirection('forward');
+      setPrevious(index);
+      setIndex((prev) => (prev + 1) % list.length);
+    }, 3000);
+
+    return () => clearInterval(intervalTimer);
+  }, [isPaused, index, list.length]);
 
   const handlePrev = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    setDirection('backward');
+    setPrevious(index);
     setIndex((prev) => (prev - 1 + list.length) % list.length);
   };
 
   const handleNext = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    setDirection('forward');
+    setPrevious(index);
     setIndex((prev) => (prev + 1) % list.length);
   };
 
   const handleIndicatorClick = (e, targetIndex) => {
     e.preventDefault();
     e.stopPropagation();
+    if (targetIndex === index) return;
+    setDirection(targetIndex > index ? 'forward' : 'backward');
+    setPrevious(index);
     setIndex(targetIndex);
   };
 
@@ -69,26 +119,55 @@ export default function LayananFisik({ services }) {
           role="region"
           aria-roledescription="carousel"
           aria-label="Fasilitas Layanan Onsite Perpustakaan Nasional RI"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocusCapture={() => setIsPaused(true)}
+          onBlurCapture={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              setIsPaused(false);
+            }
+          }}
         >
-          <Link
-            to={current.href || '/layanan/fasilitas'}
-            className="onsite-slide-link"
-            aria-label={`Buka informasi fasilitas: ${current.title}`}
-          >
-            <div className="onsite-slide-active" key={current.id}>
-              {/* Gambar Banner Utama */}
-              <img
-                src={current.image}
-                alt={current.alt || current.title}
-                className="onsite-banner-img"
-              />
+          {/* Container Slides dengan Transisi Slide In ke Kiri seperti Section Hero */}
+          <div className={`onsite-slides-wrapper direction-${direction}`}>
+            {list.map((item, pos) => {
+              const isCurrent = pos === index;
+              const isPrev = pos === previous;
 
-              {/* Overlay Fade Black saat Hover + Judul di Tengah */}
-              <div className="onsite-hover-overlay" aria-hidden="true">
-                <h3 className="onsite-banner-title">{current.title}</h3>
-              </div>
-            </div>
-          </Link>
+              if (!isCurrent && !isPrev) {
+                return null;
+              }
+
+              return (
+                <div
+                  key={item.id}
+                  className={`onsite-slide ${isCurrent ? 'is-current' : ''} ${isPrev ? 'is-previous' : ''}`}
+                  aria-hidden={!isCurrent}
+                >
+                  <Link
+                    to={item.href || '/layanan/fasilitas'}
+                    className="onsite-slide-link"
+                    aria-label={`Buka informasi fasilitas: ${item.title}`}
+                    tabIndex={isCurrent ? 0 : -1}
+                  >
+                    <div className="onsite-slide-viewport">
+                      {/* Gambar Banner Utama */}
+                      <img
+                        src={item.image}
+                        alt={item.alt || item.title}
+                        className="onsite-banner-img"
+                      />
+
+                      {/* Overlay Fade Black saat Hover + Judul di Tengah (Statis tanpa animasi teks mandiri) */}
+                      <div className="onsite-hover-overlay" aria-hidden="true">
+                        <h3 className="onsite-banner-title">{item.title}</h3>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
 
           {/* Tombol Panah Kiri (Chevron Left) */}
           <button

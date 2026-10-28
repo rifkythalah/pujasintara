@@ -43,7 +43,105 @@
   user-select: none;
 }
 
-/* Slide Link Wrapper */
+/* Slides Wrapper & Slide Items (Transisi Geser / Slide In ke Kiri seperti Section Hero) */
+.onsite-slides-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.onsite-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  z-index: 0;
+}
+
+/* Saat slide pertama kali dimuat */
+.onsite-slide.is-current {
+  visibility: visible;
+  z-index: 1;
+}
+
+/* Direction: Forward (Next / Autoplay Slide In ke Kiri persis seperti Section Hero) */
+.direction-forward .onsite-slide.is-current {
+  visibility: visible;
+  animation: onsite-slide-in .55s cubic-bezier(0.25, 1, 0.5, 1) both;
+  z-index: 1;
+}
+
+.direction-forward .onsite-slide.is-previous {
+  visibility: visible;
+  animation: onsite-slide-out .55s cubic-bezier(0.25, 1, 0.5, 1) both;
+  z-index: 0;
+}
+
+/* Direction: Backward (Prev Slide In dari Kiri ke Kanan) */
+.direction-backward .onsite-slide.is-current {
+  visibility: visible;
+  animation: onsite-slide-in-reverse .55s cubic-bezier(0.25, 1, 0.5, 1) both;
+  z-index: 1;
+}
+
+.direction-backward .onsite-slide.is-previous {
+  visibility: visible;
+  animation: onsite-slide-out-reverse .55s cubic-bezier(0.25, 1, 0.5, 1) both;
+  z-index: 0;
+}
+
+/* Animasi Slide In ke Kiri (Forward) */
+@keyframes onsite-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes onsite-slide-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Animasi Slide In dari Kiri ke Kanan (Backward) */
+@keyframes onsite-slide-in-reverse {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes onsite-slide-out-reverse {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onsite-slide.is-current {
+    animation: none !important;
+    visibility: visible;
+  }
+  .onsite-slide.is-previous {
+    animation: none !important;
+    visibility: hidden;
+  }
+}
+
+/* Slide Link Wrapper & Viewport */
 .onsite-slide-link {
   display: block;
   width: 100%;
@@ -51,6 +149,13 @@
   position: relative;
   text-decoration: none;
   cursor: pointer;
+}
+
+.onsite-slide-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Banner Image */
@@ -62,21 +167,22 @@
   transition: transform 0.5s ease, filter 0.4s ease;
 }
 
-/* Overlay Exposure / Fade Black (Normal: tipis, Hover: gelap/fade black) */
+/* Overlay Exposure / Fade Black (Normal: semu tipis, Hover: redup/fade black) */
 .onsite-hover-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(0, 0, 0, 0.22);
   transition: background 0.35s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px;
+  pointer-events: none;
 }
 
 /* Efek Hover ke Gambar: Fade Black / Exposure Turun */
 .onsite-carousel-container:hover .onsite-hover-overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.52);
 }
 
 .onsite-carousel-container:hover .onsite-banner-img {
@@ -84,23 +190,18 @@
   filter: brightness(0.85);
 }
 
-/* Teks Judul Utama di Tengah Gambar */
+/* Teks Judul Utama di Tengah Gambar (Statis tanpa animasi teks show up) */
 .onsite-banner-title {
   color: #ffffff;
-  font-size: clamp(30px, 3.5vw, 44px);
+  font-size: clamp(28px, 3.4vw, 42px);
   font-weight: 800;
   text-align: center;
   letter-spacing: -0.8px;
   margin: 0;
-  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.65);
-  transition: transform 0.3s ease, letter-spacing 0.3s ease;
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.75);
   max-width: 900px;
   padding-inline: 20px;
-}
-
-.onsite-carousel-container:hover .onsite-banner-title {
-  transform: scale(1.03);
-  letter-spacing: -0.4px;
+  animation: none !important;
 }
 
 /* Tombol Panah Navigasi Kiri & Kanan (Chevron) */
@@ -188,22 +289,6 @@
   width: 48px;
   background-color: #ffffff;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
-/* Animasi Fade In Gambar saat Slide Berganti */
-.onsite-slide-active {
-  animation: onsiteFadeIn 0.4s ease-out;
-}
-
-@keyframes onsiteFadeIn {
-  from {
-    opacity: 0.75;
-    transform: scale(1.02);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* --- Responsif Layout --- */

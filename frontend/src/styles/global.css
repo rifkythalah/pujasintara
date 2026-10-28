@@ -29,7 +29,8 @@ h3 { font-size: 19px; letter-spacing: -.35px; }
 .topbar-note { display: flex; align-items: center; gap: 12px; color: var(--primary); font-size: 12px; }
 .topbar-note small { display: block; color: var(--muted); font-size: 10px; }
 .language-label { font-size: 12px; color: var(--muted); border-left: 1px solid var(--border); padding-left: 22px; }
-.navbar { background: var(--primary); color: white; position: sticky; top: 0; z-index: 20; }
+.site-header { position: sticky; top: 0; z-index: 20; }
+.navbar { background: var(--primary); color: white; }
 .nav-container { display: flex; align-items: center; justify-content: space-between; }
 .site-nav { flex: 1; }
 .nav-list { display: flex; align-items: stretch; justify-content: space-between; list-style: none; padding: 0; margin: 0; }

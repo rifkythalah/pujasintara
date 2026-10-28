@@ -37,32 +37,37 @@
   margin: 0;
 }
 
-/* Tombol CTA Hijau di Kanan Atas */
-.berita-header-cta {
+/* Tombol CTA Hijau di Bawah Berita Ketiga */
+.berita-secondary-cta-wrap {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.berita-more-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background-color: var(--accent, #10743b);
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
-  padding: 11px 24px;
+  padding: 10px 22px;
   border-radius: 8px;
   text-decoration: none;
   white-space: nowrap;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(16, 116, 59, 0.18);
+  box-shadow: 0 4px 12px rgba(16, 116, 59, 0.16);
   transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
-.berita-header-cta:hover {
+.berita-more-btn:hover {
   background-color: #0b6130;
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(16, 116, 59, 0.26);
+  box-shadow: 0 6px 16px rgba(16, 116, 59, 0.24);
 }
 
-.berita-header-cta:active {
+.berita-more-btn:active {
   transform: translateY(0);
 }
 
@@ -71,7 +76,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
   gap: 48px;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 /* --- Kolom Kiri: Berita Utama (Featured News Card) --- */
@@ -126,24 +131,28 @@
   margin: 0 0 16px 0;
 }
 
-/* --- Kolom Kanan: Daftar 2 Berita Tambahan (Stacked) --- */
+/* --- Kolom Kanan: 2 Berita Tambahan Berjejer Rapat Vertikal --- */
+.berita-secondary-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .berita-secondary-list {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  justify-content: space-between;
-  height: 100%;
+  gap: 16px; /* Spacing rapat dan dekat, tidak kejauhan */
+  justify-content: flex-start;
 }
 
 .berita-item-row {
   display: flex;
-  gap: 20px;
+  gap: 18px;
   align-items: flex-start;
 }
 
 .berita-item-media {
-  width: 165px;
-  height: 140px;
+  width: 160px;
+  height: 135px;
   flex-shrink: 0;
   border-radius: 12px;
   overflow: hidden;
@@ -167,7 +176,6 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .berita-item-title {
@@ -187,14 +195,14 @@
   font-size: 12px;
   color: #64748b;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .berita-item-excerpt {
   font-size: 13px;
   color: #334155;
   line-height: 1.55;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -206,7 +214,7 @@
   margin-top: auto;
   display: flex;
   justify-content: flex-end;
-  padding-top: 6px;
+  padding-top: 4px;
 }
 
 .berita-detail-link {
@@ -248,41 +256,93 @@
 
   .berita-main-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 36px;
   }
 
   .berita-secondary-list {
-    gap: 28px;
+    gap: 20px;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .section.berita-section {
     padding-block: 40px 52px;
   }
 
   .berita-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
     margin-bottom: 24px;
   }
 
-  .berita-header-cta {
-    width: 100%;
+  /* Berita Highlight: 1 Card Foto Besar di Atas */
+  .berita-featured-media {
+    max-height: 220px;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    margin-bottom: 14px;
   }
 
-  .berita-item-row {
-    flex-direction: column;
+  .berita-featured-title {
+    font-size: 16.5px;
+    margin-bottom: 6px;
+  }
+
+  .berita-featured-excerpt {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  /* Berita Sekunder di Mobile: Card Kecil Horizontal (Thumbnail di Kiri, Teks di Kanan) */
+  .berita-secondary-list {
     gap: 14px;
   }
 
-  .berita-item-media {
-    width: 100%;
-    height: 190px;
+  .berita-item-row {
+    display: flex;
+    flex-direction: row; /* Tetap horizontal, tidak tumpuk ke bawah */
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
   }
 
-  .berita-featured-media {
-    max-height: 220px;
+  .berita-item-media {
+    width: 95px;
+    height: 95px;
+    min-width: 95px;
+    border-radius: 9px;
+  }
+
+  .berita-item-title {
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .berita-item-meta {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .berita-item-excerpt {
+    font-size: 12px;
+    line-height: 1.45;
+    margin-bottom: 6px;
+    -webkit-line-clamp: 2;
+  }
+
+  .berita-detail-link {
+    font-size: 12px;
+  }
+
+  .berita-secondary-cta-wrap {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .berita-more-btn {
+    width: 100%;
+    text-align: center;
   }
 }

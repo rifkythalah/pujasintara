@@ -10,7 +10,10 @@ export default function SiteLayout() {
   const [locale, setLocale] = useState('id');
   return <>
     <a className="skip-link" href="#konten-utama">Lewati navigasi</a>
-    <TopBar locale={locale} onLocaleChange={setLocale} /><Navbar key={location.key} locale={locale} onLocaleChange={setLocale} />
+    <div className="site-header">
+      <TopBar locale={locale} onLocaleChange={setLocale} />
+      <Navbar key={location.key} locale={locale} onLocaleChange={setLocale} />
+    </div>
     <main id="konten-utama" tabIndex={-1}><Outlet /></main>
     <Footer />
     <ScrollRestoration />
